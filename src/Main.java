@@ -20,6 +20,9 @@ public class Main {
         getNewEmployees();
         getUniqueEmployees();
         calculateAverageSalaryByDepartment();
+        getOldEmployee();
+        countEmployeesByPosition();
+        getGroupEmployeesByPositionAndEachDepartment();
     }
 
     public static void readEmployee() {
@@ -205,7 +208,9 @@ public class Main {
         System.out.println("\n=============Calculate the average salary in each department========");
         try (BufferedWriter bufferedWriter = new BufferedWriter
                 (new FileWriter("department_summary.txt"))) {
-            Map<Department, Double> departmentAndAverageSalary = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.averagingDouble(Employee::getSalary)));
+            Map<Department, Double> departmentAndAverageSalary = employeeList.stream()
+                    .collect(Collectors.groupingBy(Employee::getDepartment,
+                            Collectors.averagingDouble(Employee::getSalary)));
 
             departmentAndAverageSalary.forEach((department, avgSalary) -> {
                         System.out.println(department);
@@ -225,7 +230,89 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public static void getOldEmployee() {
+        System.out.println("\n=============Find the employee with the earliest start date========");
+        try (BufferedWriter bufferedWriter = new BufferedWriter
+                (new FileWriter("processed_employees_sort.txt"))) {
+            Employee employee = employeeList.stream().min(Comparator.comparing(Employee::getStartDate)).orElseThrow();
+            System.out.println(employee);
+            bufferedWriter.write(employee.toString());
+
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void countEmployeesByPosition() {
+        System.out.println("\n=============Count the number of employees in each position========");
+        try (BufferedWriter bufferedWriter = new BufferedWriter
+                (new FileWriter("employees_by_position.txt"))) {
+            Map<Position, Long> employees = employeeList.stream().collect(Collectors.groupingBy(Employee::getPosition, Collectors.counting()));
+            employees.forEach((position, count) -> {
+                        System.out.println(position + "==>" + count);
+                        try {
+                            bufferedWriter.write(position.name());
+                            bufferedWriter.newLine();
+
+                            bufferedWriter.write(count.toString());
+                            bufferedWriter.newLine();
+                            bufferedWriter.flush();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            );
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void getGroupEmployeesByPositionAndEachDepartment() {
+        System.out.println("\n============= Group employees first by department and then by position within each department========");
+        try (BufferedWriter bufferedWriter = new BufferedWriter
+                (new FileWriter("employees_by_department_and_position.txt"))) {
+            Map<Department, Map<Position, List<Employee>>> employees = employeeList.stream()
+                    .collect(Collectors.groupingBy
+                            (Employee::getDepartment, Collectors.groupingBy(Employee::getPosition)));
+            employees.forEach((department, employeeList) -> {
+                System.out.println("\nDepartment => "+department);
+
+                try {
+                    bufferedWriter.write("Department=> "+department.name());
+                    bufferedWriter.newLine();
+                    employeeList.forEach((position, employees1) -> {
+                                System.out.println(position);
+                                try {
+                                    bufferedWriter.write(position.name());
+                                    bufferedWriter.newLine();
+                                    employees1.forEach(System.out::println);
+                                    for (Employee employee :
+                                            employees1
+                                    ) {
+                                        bufferedWriter.write(employee.toString());
+                                        bufferedWriter.newLine();
+                                    }
+                                    bufferedWriter.flush();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                    );
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            });
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
