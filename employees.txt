@@ -1,4 +1,4 @@
-1,John,Doe,28,50000,IT,false,2015-05-01,john.doe@example.com,1234567890,JUNIOR,123 Main St
+1,John,Doe,28,50000,IT,false,2015-05-01,john.doe@example.com,1234567890,INTERN,123 Main St
 2,Jane,Smith,35,60000,HR,true,2010-03-15,jane.smith@example.com,0987654321,MANAGER,456 Elm St
 3,Michael,Johnson,42,75000,FINANCE,true,2008-11-22,michael.johnson@example.com,2345678901,SENIOR,789 Pine St
 4,Emily,Davis,30,54000,IT,false,2013-07-19,emily.davis@example.com,3456789012,JUNIOR,101 Maple St
